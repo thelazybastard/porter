@@ -7,7 +7,7 @@ fn main() {
 
     match args[1].as_str() {
         "install" => install(),
-        "check" => check(),
+        "check" => check(&args[2]),
         _ => println!("Unknown command. use 'porter install' or 'porter check'")
     }
 }
@@ -24,6 +24,6 @@ fn install() {
     }
 }
 
-fn check() {
-    println!("Check");
+fn check(commit_message: &str) {
+    println!("{commit_message}");
 }
