@@ -60,7 +60,8 @@ async fn check(commit_message: &str) {
     let ollama = Ollama::default();
 
     let model = "tinyllama:latest".to_string();
-    let mut prompt = "Check out this commit message and give criticism in 1 - 2 sentences: ".to_string();
+    let mut prompt = "Respond in exactly 1 sentence. \
+        Critique this git commit message or say it's good: ".to_string();
     prompt.push_str(&commit_message);
 
     let res = ollama.generate(GenerationRequest::new(model, prompt)).await;
