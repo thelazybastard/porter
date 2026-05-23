@@ -1,4 +1,5 @@
-use std::env;
+use std::os::unix::fs::PermissionsExt;
+use std::{env, fs};
 use std::process::Command;
 use std::path::Path;
 
@@ -22,6 +23,18 @@ fn install() {
         Ok(_) => println!("Installed"),
         Err(_) => println!("Unable to configure Porter")
     }
+
+    // need to get permission of the .githook and modify it to allow githook exectution 
+    // permission for all users.  
+    let hook_path = ".githooks/commit-msg";
+    let metadata = match fs::metadata(hook_path) {
+        Ok(e) => e,
+        Err(_) => return,
+    };
+    let mut perms = metadata.permissions();
+    perms.set_mode(perms.mode() | 0o111);
+    let _ = fs::set_permissions(hook_path, perms);
+    
 }
 
 fn check(commit_message: &str) {
