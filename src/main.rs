@@ -2,15 +2,17 @@ use std::os::unix::fs::PermissionsExt;
 use std::{env, fs};
 use std::process::Command;
 use std::path::Path;
-use std::time::Duration;
-use tokio::time::sleep;
+use ollama_rs::Ollama;
+use ollama_rs::generation::completion::request::GenerationRequest;
+use tokio;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
 
     match args[1].as_str() {
         "install" => install(),
-        "check" => check(&args[2]),
+        "check" => check(&args[2]).await,
         _ => println!("Unknown command. use 'porter install' or 'porter check'")
     }
 }
@@ -20,6 +22,7 @@ fn install() {
         println!("Use Porter in a Git-initialized project!");
         return
     }
+
     // only takes a second might as well just run it in case install gets called again
     match Command::new("git").args(["config", "core.hooksPath", ".githooks"]).status() {
         Ok(_) => (),
@@ -52,11 +55,14 @@ fn install() {
     } 
 }
 
-fn check(commit_message: &str) {
-    println!("{commit_message}");
+async fn check(commit_message: &str) {
+    let ollama = Ollama::default();
 
-    // match Command::new("ollama").args(["run", "qwen3.5:0.8b"]).status() {
-    //     Ok(_) => println!("Installed Qwen 3.5"),
-    //     Err(_) => println!("Could not install Qwen 3.5. Try again!")
-    // }
+    let model = "qwen3.5:0.8b".to_string();
+    let mut prompt = "Check out this commit message and give criticism in 1 - 2 sentences: ".to_string();
+    prompt.push_str(&commit_message);
+
+    let res = ollama.generate(GenerationRequest::new(model, prompt)).await;
+
+    println!("{:?}", res);
 }
