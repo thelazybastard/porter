@@ -1,7 +1,7 @@
-// 2 args. args 0 is binary so exclude that. args1 wil be either install or check. args2 is either empty or
-// the commit message
-// 
 use std::env;
+use std::process;
+use std::process::Command;
+use std::path::Path;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -9,12 +9,20 @@ fn main() {
     match args[1].as_str() {
         "install" => install(),
         "check" => check(),
-        _ => println!("Unknown command. use 'porter' install or 'porter check'")
+        _ => println!("Unknown command. use 'porter install' or 'porter check'")
     }
 }
 
 fn install() {
-    println!("Install");
+    if !Path::new(".git").is_dir() {
+        println!("Use Porter in a Git-initialized project!");
+        return
+    }
+
+    match Command::new("git").args(["config", "core.hooksPath", ".githooks"]).status() {
+        Ok(_) => println!("Installed"),
+        Err(_) => println!("Unable to configure Porter")
+    }
 }
 
 fn check() {
