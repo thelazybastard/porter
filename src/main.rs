@@ -17,6 +17,7 @@ async fn main() {
     }
 }
 
+
 fn install() {
     if !Path::new(".git").is_dir() {
         println!("Use Porter in a Git-initialized project!");
@@ -45,20 +46,20 @@ fn install() {
         .arg("list")
         .output()
         .expect("Failed to run ollama list");
-    if !String::from_utf8_lossy(&check_output.stdout).contains("qwen3.5:0.8b") {
-        match Command::new("ollama").arg("pull").status() {
-            Ok(_) => println!("Downloading 'qwen3.5:0.8b' (this may take a while)..."),
-            Err(_) => println!("Failed to download Qwen 3.5. Try again!")
+    if !String::from_utf8_lossy(&check_output.stdout).contains("tinyllama") {
+        match Command::new("ollama").args(["pull", "tinyllama"]).status() {
+            Ok(_) => println!("Downloaded tinyllama"),
+            Err(_) => println!("Failed to download tinyllama. Try again!")
         }
     } else {
-        println!("Porter and Qwen 3.5 are already installed!")
+        println!("Porter and tinyllama are already installed!")
     } 
 }
 
 async fn check(commit_message: &str) {
     let ollama = Ollama::default();
 
-    let model = "qwen3.5:0.8b".to_string();
+    let model = "tinyllama:latest".to_string();
     let mut prompt = "Check out this commit message and give criticism in 1 - 2 sentences: ".to_string();
     prompt.push_str(&commit_message);
 
