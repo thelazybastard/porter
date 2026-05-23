@@ -22,6 +22,7 @@ async fn main() {
 }
 
 
+
 fn install() {
     if !Path::new(".git").is_dir() {
         println!("Use Porter in a Git-initialized project!");
