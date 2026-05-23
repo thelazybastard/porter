@@ -65,5 +65,5 @@ async fn check(commit_message: &str) {
 
     let res = ollama.generate(GenerationRequest::new(model, prompt)).await;
 
-    println!("{:?}", res);
+    println!("{}", res.unwrap().response);
 }
