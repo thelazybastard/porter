@@ -12,7 +12,11 @@ async fn main() {
 
     match args[1].as_str() {
         "install" => install(),
-        "check" => check(&args[2]).await,
+        "check" => {
+            let path = &args[2];
+            let msg = fs::read_to_string(path).expect("Could not read commit message file");
+            check(msg.trim()).await;
+        }
         _ => println!("Unknown command. use 'porter install' or 'porter check'")
     }
 }
